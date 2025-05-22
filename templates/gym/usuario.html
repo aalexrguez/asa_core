@@ -1,0 +1,99 @@
+{% extends 'gym/base.html' %}
+{% load static %}
+{% block title %}Usuarios{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'gym/css/clientes.css' %}">
+
+<div class="mb-4">
+  <h1 class="text-2xl font-semibold mb-2">Usuarios</h1>
+
+  <!-- Búsqueda y filtro -->
+  <form method="GET" class="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
+    <div class="flex gap-2 w-full sm:w-auto">
+      <!-- Campo de búsqueda -->
+      <input type="text" name="buscar" placeholder="Buscar por username..."
+             value="{{ busqueda }}"
+             class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:max-w-xs">
+
+      <!-- Filtro por membresía -->
+      <select name="tipo"
+              class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="">Todas las membresías</option>
+        <option value="Mensual" {% if filtro_membresia == "Mensual" %}selected{% endif %}>Mensual</option>
+        <option value="Anual" {% if filtro_membresia == "Anual" %}selected{% endif %}>Anual</option>
+        <option value="Semestral" {% if filtro_membresia == "Semestral" %}selected{% endif %}>Semestral</option>
+        <option value="Invitado" {% if filtro_membresia == "Invitado" %}selected{% endif %}>Invitado</option>
+      </select>
+
+      <!-- Botón filtrar -->
+      <button type="submit"
+              class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition">
+        Filtrar
+      </button>
+    </div>
+
+    <!-- Botón agregar -->
+    <a href="{% url 'crearUsuario' %}" class="btn-agregar-icon icono-derecha mt-2 sm:mt-0">
+      <img src="{% static 'gym/media/add.png' %}" alt="Agregar cliente">
+    </a>
+  </form>
+</div>
+
+<!-- Tabla de usuarios -->
+<div class="overflow-x-auto rounded-lg shadow">
+  <table class="min-w-full bg-white">
+    <thead class="bg-gray-100 text-gray-700">
+      <tr>
+        <th class="px-4 py-2 text-left">Username</th>
+        <th class="px-4 py-2 text-left">Foto</th>
+        <th class="px-4 py-2 text-left">Estado</th>
+        <th class="px-4 py-2 text-left">Unido el</th>
+        <th class="px-4 py-2 text-left">Membresía</th>
+        <th class="px-4 py-2 text-left">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in datos %}
+      <tr class="border-t">
+        <td class="px-4 py-2">{{ item.usuario.username }}</td>
+        <td class="px-4 py-2">
+          {% if item.usuario.usuario_imagen %}
+            <img src="{{ item.usuario.usuario_imagen.url }}" alt="Foto" class="h-10 w-10 rounded-full object-cover">
+          {% else %}
+            <span class="text-gray-400 italic">Sin imagen</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-2">
+          {% if item.usuario.usuario_status %}
+            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Activo</span>
+          {% else %}
+            <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">Inactivo</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-2">{{ item.usuario.usuario_fecha_registro|date:"d/m/Y" }}</td>
+        <td class="px-4 py-2">
+          {% if item.membresia %}
+            {{ item.membresia.mem_tipo.tm_nombre }}
+          {% else %}
+            <span class="text-gray-500 italic">Sin membresía</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-2 flex gap-2">
+          <a href="{% url 'editar_usuario' item.usuario.username %}">
+            <img src="{% static 'gym/media/editar.png' %}" class="h-5 w-5 hover:scale-110">
+          </a>
+          <a href="{% url 'eliminar_usuario' item.usuario.username %}">
+            <img src="{% static 'gym/media/eliminar.png' %}" class="h-5 w-5 hover:scale-110">
+          </a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" class="px-4 py-4 text-center text-gray-500 italic">No hay usuarios que coincidan con la búsqueda.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

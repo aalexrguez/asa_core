@@ -1,0 +1,60 @@
+{% extends 'gym/base.html' %}
+{% load static %}
+{% block title %}Membresías Registradas{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 p-6">
+  <div class="max-w-6xl mx-auto bg-white p-6 rounded-2xl shadow-md">
+    
+    <!-- Encabezado con botón -->
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-2xl font-bold text-gray-800">Listado de Membresías</h2>
+      <a href="{% url 'crear_membresia' %}" class="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-xl shadow transition">
+        Asignar membresía
+      </a>
+    </div>
+
+    <!-- Tabla -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Tipo de Membresía</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Usuario</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Fecha de Inicio</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Fecha de Fin</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Estado</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for membresia in membresias %}
+          <tr>
+            <td class="px-4 py-2 text-sm text-gray-800">{{ membresia.mem_tipo.tm_nombre }}</td>
+            <td class="px-4 py-2 text-sm text-gray-800">
+              {{ membresia.mem_usuario.usuario_nombre }} {{ membresia.mem_usuario.usuario_apellidos }}
+            </td>
+            <td class="px-4 py-2 text-sm text-gray-600">{{ membresia.mem_fecha_inicio|date:"d/m/Y" }}</td>
+            <td class="px-4 py-2 text-sm text-gray-600">{{ membresia.mem_fecha_fin|date:"d/m/Y" }}</td>
+            <td class="px-4 py-2 text-sm">
+              {% if membresia.mem_status %}
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                  Activa
+                </span>
+              {% else %}
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                  Inactiva
+                </span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="px-4 py-4 text-center text-sm text-gray-500">No hay membresías registradas.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

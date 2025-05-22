@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}ASA CORE{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'gym/css/style_index.css' %}">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>ASA CORE</h2>
+    <a href="{% url 'index' %}">Dashboard</a>
+    <a href="{% url 'usuarios' %}">Usuarios</a>
+    <a href="{% url 'membresia' %}">Membresías</a>
+    <a href="#">Pagos</a>
+    <a href="#">Entrenadores</a>
+    <a href="#">Avances físicos</a>
+    <a href="#">Reportes</a>
+    <a href="#">Configuración</a>
+  </div>
+
+  <div class="main">
+    {% block content %}{% endblock %}
+  </div>
+
+</body>
+</html>
