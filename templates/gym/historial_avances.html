@@ -1,0 +1,42 @@
+{% extends 'gym/base.html' %}
+{% load static %}
+{% block title %}Historial de Avances{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 p-6">
+  <div class="max-w-5xl mx-auto bg-white p-6 rounded-2xl shadow-md">
+
+    <h2 class="text-2xl font-bold mb-4">Historial de avances de {{ cliente.usuario_nombre }} {{ cliente.usuario_apellidos }}</h2>
+
+    {% if avances %}
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white border rounded-xl text-sm">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="py-2 px-4 text-left">Fecha</th>
+            <th class="py-2 px-4 text-left">Peso (kg)</th>
+            <th class="py-2 px-4 text-left">Estatura (cm)</th>
+            <th class="py-2 px-4 text-left">Grasa corporal (%)</th>
+            <th class="py-2 px-4 text-left">Comentario</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in avances %}
+          <tr class="border-t">
+            <td class="py-2 px-4">{{ a.fecha }}</td>
+            <td class="py-2 px-4">{{ a.peso }}</td>
+            <td class="py-2 px-4">{{ a.estatura }}</td>
+            <td class="py-2 px-4">{{ a.grasa_corporal|default:"-" }}</td>
+            <td class="py-2 px-4">{{ a.comentario|default:"-" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-gray-500 mt-4">No hay avances registrados para este cliente.</p>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

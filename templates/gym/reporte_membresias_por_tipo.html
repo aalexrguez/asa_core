@@ -1,0 +1,52 @@
+{% extends 'gym/base.html' %}
+{% load static %}
+{% block title %}Reporte Membresías por Tipo{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 p-6">
+  <div class="max-w-xl mx-auto bg-white p-6 rounded-2xl shadow-md">
+
+    <h2 class="text-2xl font-bold mb-6">Distribución por Tipo de Membresía</h2>
+
+    <div class="flex justify-center">
+      <canvas id="graficoPastel" width="420" height="390"></canvas>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+fetch('/api/reportes/membresias/por-tipo/')
+  .then(res => res.json())
+  .then(data => {
+    const labels = data.map(d => d.tm_nombre);
+    const valores = data.map(d => d.cantidad);
+
+    const ctx = document.getElementById('graficoPastel').getContext('2d');
+
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Usuarios por tipo',
+          data: valores,
+          backgroundColor: [
+            '#3b82f6', '#10b981', '#f59e0b', '#ef4444',
+            '#6366f1', '#ec4899', '#f472b6'
+          ]
+        }]
+      },
+      options: {
+        responsive: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

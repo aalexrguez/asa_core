@@ -1,0 +1,59 @@
+{% extends 'gym/base.html' %}
+{% load static %}
+{% block title %}Entrenador Información{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 p-6">
+  <div class="max-w-3xl mx-auto bg-white p-6 rounded-2xl shadow-md">
+    
+    <h2 class="text-xl font-bold mb-4">Información de Entrenador: {{ usuario.username }}</h2>
+
+    <form method="POST" class="space-y-4">
+      {% csrf_token %}
+
+      <label class="block font-medium">Especialidad:</label>
+<select name="especialidad" required class="w-full border rounded-xl px-4 py-2">
+  <option disabled {% if not info %}selected{% endif %}>Selecciona una especialidad</option>
+  <option value="Musculación" {% if info and info.especialidad == "Musculación" %}selected{% endif %}>Musculación</option>
+  <option value="Cardio/HIIT" {% if info and info.especialidad == "Cardio" %}selected{% endif %}>Cardio</option>
+  <option value="CrossFit" {% if info and info.especialidad == "CrossFit" %}selected{% endif %}>CrossFit</option>
+  <option value="Entrenamiento funcional" {% if info and info.especialidad == "Entrenamiento funcional" %}selected{% endif %}>Entrenamiento funcional</option>
+  <option value="Fitness general" {% if info and info.especialidad == "Fitness general" %}selected{% endif %}>Fitness general</option>
+  <option value="Pilates" {% if info and info.especialidad == "Pilates" %}selected{% endif %}>Pilates</option>
+  <option value="Yoga" {% if info and info.especialidad == "Yoga" %}selected{% endif %}>Yoga</option>
+  <option value="Entrenamiento para adultos mayores" {% if info and info.especialidad == "Entrenamiento para adultos mayores" %}selected{% endif %}>Entrenamiento para adultos mayores</option>
+  <option value="Rehabilitación física" {% if info and info.especialidad == "Rehabilitación física" %}selected{% endif %}>Rehabilitación física</option>
+  <option value="Acondicionamiento deportivo" {% if info and info.especialidad == "Acondicionamiento deportivo" %}selected{% endif %}>Acondicionamiento deportivo</option>
+</select>
+
+      <label class="block font-medium">Días disponibles:</label>
+      <div class="grid grid-cols-3 gap-2">
+        {% for dia in dias_semana %}
+          <label>
+            <input type="checkbox" name="dias" value="{{ dia }}"
+                   {% if dia in dias_seleccionados %}checked{% endif %}>
+            {{ dia }}
+          </label>
+        {% endfor %}
+      </div>
+
+      <label class="block font-medium mt-2">Horario:</label>
+      <div class="flex gap-2">
+        <input type="time" name="hora_inicio" required class="w-1/2 border rounded-xl px-4 py-2"
+               value="{{ info.hora_inicio|default:'' }}">
+        <input type="time" name="hora_fin" required class="w-1/2 border rounded-xl px-4 py-2"
+               value="{{ info.hora_fin|default:'' }}">
+      </div>
+
+      <textarea name="descripcion" rows="4" placeholder="Descripción o notas (opcional)"
+                class="w-full border rounded-xl px-4 py-2">{{ info.descripcion|default:'' }}</textarea>
+
+      <button type="submit"
+              class="bg-green-600 text-white px-6 py-2 rounded-xl hover:bg-green-700 transition transform hover:scale-105">
+        Guardar
+      </button>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

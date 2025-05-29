@@ -1,0 +1,94 @@
+{% extends 'gym/base.html' %}
+{% load static %}
+{% block title %}Registrar Avance{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 p-6">
+  <div class="max-w-3xl mx-auto bg-white p-6 rounded-2xl shadow-md">
+
+    <!-- Título -->
+    <h2 class="text-2xl font-bold mb-4">Registrar Avance Físico</h2>
+
+    <!-- Mensajes -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="mb-2 p-3 rounded-xl text-sm
+                    {% if message.tags == 'success' %}bg-green-100 text-green-800
+                    {% elif message.tags == 'error' %}bg-red-100 text-red-800{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Formulario -->
+    <form method="POST" class="space-y-4">
+      {% csrf_token %}
+
+      <!-- Cliente -->
+      <div>
+        <label class="block font-medium">Cliente</label>
+        <select name="cliente" required class="w-full border rounded-xl px-4 py-2">
+          <option disabled selected>Selecciona un cliente</option>
+          {% for c in clientes %}
+            <option value="{{ c.username }}">{{ c.usuario_nombre }} {{ c.usuario_apellidos }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Entrenador -->
+      <div>
+        <label class="block font-medium">Entrenador</label>
+        <select name="entrenador" required class="w-full border rounded-xl px-4 py-2">
+          <option disabled selected>Selecciona un entrenador</option>
+          {% for e in entrenadores %}
+            <option value="{{ e.username }}">{{ e.usuario_nombre }} {{ e.usuario_apellidos }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Fecha -->
+      <div>
+        <label class="block font-medium">Fecha del avance</label>
+        <input type="date" name="fecha" required class="w-full border rounded-xl px-4 py-2">
+      </div>
+
+      <!-- Peso -->
+      <div>
+        <label class="block font-medium">Peso (kg)</label>
+        <input type="number" name="peso" step="0.01" placeholder="Ej. 72.5" required
+               class="w-full border rounded-xl px-4 py-2">
+      </div>
+
+      <!-- Estatura -->
+      <div>
+        <label class="block font-medium">Estatura (cm)</label>
+        <input type="number" name="estatura" placeholder="Ej. 170" required
+               class="w-full border rounded-xl px-4 py-2">
+      </div>
+
+      <!-- Grasa corporal -->
+      <div>
+        <label class="block font-medium">Grasa corporal (%)</label>
+        <input type="number" name="grasa" step="0.1" placeholder="Ej. 15.8"
+               class="w-full border rounded-xl px-4 py-2">
+      </div>
+
+      <!-- Comentario -->
+      <div>
+        <label class="block font-medium">Comentario del entrenador</label>
+        <textarea name="comentario" rows="3" placeholder="Observaciones o notas..."
+                  class="w-full border rounded-xl px-4 py-2"></textarea>
+      </div>
+
+      <!-- Botón -->
+      <div class="text-right">
+        <button type="submit"
+                class="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition hover:scale-105">
+          Guardar avance
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

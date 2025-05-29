@@ -58,3 +58,56 @@ class Membresia(models.Model):
 
     def __str__(self):
         return self.mem_tipo.tm_nombre if self.mem_tipo else "Sin tipo"
+
+"""ENTRENADORES"""
+class EntrenadorInfo(models.Model):
+    entrenador = models.OneToOneField(Usuario, on_delete=models.CASCADE, primary_key=True)
+    especialidad = models.CharField(max_length=100)
+    dias_disponibles = models.CharField(max_length=100)  # Ej: "Lunes,Miércoles,Viernes"
+    hora_inicio = models.TimeField()
+    hora_fin = models.TimeField()
+    descripcion = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.entrenador.usuario_nombre} - {self.especialidad}"
+    
+class UsuarioEntrenador(models.Model):
+    ue_cliente = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='cliente')
+    ue_entrenador = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='entrenador')
+    fecha_asignacion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('ue_cliente', 'ue_entrenador')
+
+    def __str__(self):
+        return f"{self.ue_cliente.username} asignado a {self.ue_entrenador.username}"
+    
+"""AVANCES FISICOS"""
+class AvanceFisico(models.Model):
+    cliente = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        limit_choices_to={'usuario_rol__ur_rolId': 1},
+        related_name='avances_como_cliente'  # ← ¡aquí!
+    )
+    entrenador = models.ForeignKey(
+        Usuario,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        limit_choices_to={'usuario_rol__ur_rolId': 2},
+        related_name='avances_asignados'  # ← ¡y aquí!
+    )
+    fecha = models.DateField()
+    peso = models.DecimalField(max_digits=5, decimal_places=2)
+    estatura = models.PositiveIntegerField(help_text="En centímetros")
+    grasa_corporal = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
+    comentario = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.cliente.username} - {self.fecha}"
+
+    class Meta:
+        ordering = ['-fecha']
+
+

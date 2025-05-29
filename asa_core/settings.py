@@ -35,12 +35,14 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'gym',
+    'api',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -82,7 +84,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "asa_core",
         "USER": "root",
-        "PASSWORD": "Alex.6103021",
+        "PASSWORD": "mysql6103021",
         "HOST": "127.0.0.1",
         "PORT": "3306",
     }

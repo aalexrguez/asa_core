@@ -4,8 +4,8 @@
 
 {% block content %}
 <div class="min-h-screen bg-gray-100 p-6">
-  <div class="max-w-3xl mx-auto bg-white p-6 rounded-2xl shadow-md">
-    
+  <div class="max-w-7xl mx-auto bg-white p-6 rounded-2xl shadow-md">
+
     <!-- Título -->
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-2xl font-bold text-gray-800">Asignar Membresía</h2>
@@ -26,44 +26,106 @@
       </div>
     {% endif %}
 
-    <!-- Formulario -->
-    <form method="POST" class="grid grid-cols-1 gap-6">
-      {% csrf_token %}
+    <!-- Grid principal -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-      <!-- Tipo de membresía -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Tipo de Membresía</label>
-        <select name="mem_tipo" required
-                class="mt-1 block w-full rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-          <option value="" disabled selected>Selecciona un tipo</option>
-          {% for tipo in tipos %}
-            <option value="{{ tipo.tm_id }}">{{ tipo.tm_nombre }} - ${{ tipo.tm_precio }} ({{ tipo.tm_duracion_dias }} días)</option>
-          {% endfor %}
-        </select>
-      </div>
+      <!-- Columna izquierda: formulario -->
+      <form method="POST" class="space-y-4" id="form-membresia">
+        {% csrf_token %}
 
-      <!-- Usuario -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Usuario</label>
-        <select name="mem_usuario" required
-                class="mt-1 block w-full rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-          <option value="" disabled selected>Selecciona un usuario</option>
-          {% for usuario in usuarios %}
-            <option value="{{ usuario.username }}">{{ usuario.usuario_nombre }} {{ usuario.usuario_apellidos }}</option>
-          {% endfor %}
-        </select>
-      </div>
+        <!-- Tipo de membresía -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Tipo de Membresía</label>
+          <select name="mem_tipo" required
+        class="mt-1 block w-full rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+  <option value="" disabled>Selecciona un tipo</option>
+  {% for tipo in tipos %}
+    <option value="{{ tipo.tm_id }}" {% if tipo.tm_nombre == "Invitado" %}selected{% endif %}>
+      {{ tipo.tm_nombre }} - ${{ tipo.tm_precio }} ({{ tipo.tm_duracion_dias }} días)
+    </option>
+  {% endfor %}
+</select>
+        </div>
 
-     
+        <!-- Buscar usuario -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Buscar usuario</label>
+          <input type="text" name="filtro_usuario" placeholder="Nombre o apellido"
+                 class="mt-1 block w-full rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+        </div>
 
-      <!-- Botón enviar -->
-      <div class="flex justify-end">
-        <button type="submit"
-                class="bg-green-600 text-white px-6 py-2 rounded-xl hover:bg-green-700 hover:scale-105 transition transform duration-150">
-          Guardar membresía
+        <!-- Botón de filtrar -->
+        <button type="submit" name="filtrar" value="1"
+                class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition transform hover:scale-105">
+          Filtrar
         </button>
+
+        <!-- Usuario seleccionado -->
+        <div id="usuarioSeleccionado" class="text-sm text-gray-800 font-medium hidden">
+          Usuario seleccionado: <span id="nombreSeleccionado" class="text-blue-600 font-semibold"></span>
+        </div>
+
+        <!-- Campo oculto para guardar el username -->
+        <input type="hidden" name="mem_usuario" id="inputUsuario">
+
+        <!-- Botón de guardar -->
+        <div class="pt-2">
+          <button type="submit"
+                  class="bg-green-600 text-white px-6 py-2 rounded-xl hover:bg-green-700 hover:scale-105 transition transform duration-150">
+            Guardar membresía
+          </button>
+        </div>
+      </form>
+
+      <!-- Columna derecha: tabla de usuarios -->
+      <div>
+        <h3 class="text-lg font-semibold mb-3">Usuarios encontrados</h3>
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white border rounded-xl text-sm">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="py-2 px-4 text-left">Username</th>
+                <th class="py-2 px-4 text-left">Nombre</th>
+                <th class="py-2 px-4 text-left">Apellido</th>
+                <th class="py-2 px-4 text-left">Imagen</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for usuario in usuarios %}
+              <tr class="border-t cursor-pointer hover:bg-gray-100 transition"
+                  onclick="seleccionarUsuario('{{ usuario.username }}', '{{ usuario.usuario_nombre }} {{ usuario.usuario_apellidos }}')">
+                <td class="py-2 px-4">{{ usuario.username }}</td>
+                <td class="py-2 px-4">{{ usuario.usuario_nombre }}</td>
+                <td class="py-2 px-4">{{ usuario.usuario_apellidos }}</td>
+                <td class="py-2 px-4">
+                  {% if usuario.usuario_imagen %}
+                    <img src="{{ usuario.usuario_imagen.url }}" alt="Foto" class="h-10 w-10 rounded-full object-cover">
+                  {% else %}
+                    <span class="text-gray-400 italic">Sin imagen</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="4" class="py-3 px-4 text-center text-gray-500">No se encontraron usuarios.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </form>
+    </div>
   </div>
 </div>
+
+<!-- Script para seleccionar usuario -->
+<script>
+  function seleccionarUsuario(username, nombreCompleto) {
+    document.getElementById('inputUsuario').value = username;
+    const contenedor = document.getElementById('usuarioSeleccionado');
+    const texto = document.getElementById('nombreSeleccionado');
+    texto.textContent = nombreCompleto;
+    contenedor.classList.remove('hidden');
+  }
+</script>
 {% endblock %}
