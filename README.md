@@ -25,7 +25,7 @@ administradores del gimnasio puedan manejar de forma eficiente a los clientes, e
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Base de datos**: MYSQL 
 - **API**: Django REST Framework
-- **Gráficas y Reportes**: Charts.js / Matplotlib (según el caso)
+- **Gráficas y Reportes**: Charts.js 
 - **Gestión de usuarios**: Sistema de roles (administrador, cliente, entrenador)
 
 ---
